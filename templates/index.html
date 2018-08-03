@@ -1,0 +1,225 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block styles %}
+{{ super() }}
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,700" rel="stylesheet" type="text/css">
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css">    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+
+{% endblock %}
+
+    {% block title %}
+        Welcome to Healthy Weight Tracker
+    {% endblock %}
+
+
+    {% block body %} 
+    
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="/" class="navbar-brand">Healthy</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+                {% if current_user.is_authenticated %}
+                <div class="navbar-form pullright">
+                        <div style="float: right"><a href="/logout">Log Out</a></div>
+                        
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+
+    
+                
+    <div class="container-fluid">
+        <img src="/static/img/header_full.jpg" class="bg">
+        
+           
+            
+                
+                    {% block content %}  
+                    <div class="col-md-10 col-md-offset-1 col-sm-12 maincontent" style="background:ghostwhite;">  
+
+                     <!-- Jumbotron -->
+        <div class="jumbotron jumbotron-fluid" style="text-align: center; background:ghostwhite;">
+            <h1>Welcome To Healthy Weight Tracker</h1>
+            <p class="lead">Welcome back <strong>{{ name.first_name }}</strong>!<br> To get the most out of this website, lets start by getting
+                your most weight for today.</p>
+            <button onclick="myClick('myDIV')" class="btn btn-lg btn-success">Record Today's Weight &raquo</button>
+           <br>
+            {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <strong>{{ message }}</strong><br>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}  
+                <br>
+            <div id="myDIV" style="display:none;">                 
+                <div class="col-md-12" style="text-align: center;">                    
+                    <form class="form-horizontal" action="/" method="POST">                    
+                        <strong>Weight in Lbs:</strong>                   
+                        {{ form.hidden_tag() }}                                            
+                        {{ form.weight }}    
+                        <button class="btn btn-primary btn-success" type="submit">Submit</button>   
+                    </form> 
+            </div>                           
+        </div> 
+        </div>      
+        <div id="whoisbmi" style="display:none; text-align: center;">
+               <p><h3>Your current BMI is <strong>{{ fun.bmi() }}</strong>, which is
+                {% if fun.bmi() >= 30 %}
+                    <strong>obese</strong>.
+                {% elif fun.bmi() >= 25 %}
+                <strong>overweight</strong>.
+                {% elif fun.bmi() >= 18.5 %}
+                <strong>normal</strong>.
+                {% else %}
+                <strong>underweight</strong>.
+                {% endif %}
+            </h3></p>                                                
+        </div>
+
+        <div id="whoisbmr" style="display:none; text-align: center;">
+
+                <p><h3>Your BMR is <strong>{{ fun.bmr() }}</strong> Calories. 
+                </h3></p>                                
+        </div>
+        
+        <div class="row" style="text-align: center;">
+                <div class="col-lg-4">
+                    <h2>BMI</h2>
+                    <p>Body Mass Index (BMI) is a person's weight in kilograms divided by the square of height in meters. A high BMI can be an indicator of high body fatness. <a onclick="myClick('moreBMI')" style="cursor: pointer;">Read more...</a></p>
+                        <ul style="text-align: left; display:none;" id="moreBMI">
+                            <li>A BMI less than 18.5 falls within the underweight range.</li>
+                            <li>A BMI between 18.5 to 24.9 falls within the normal range.</li>
+                            <li>A BMI between 25.0 to 29.9 falls within the overweight range.</li>
+                            <li>A BMI is 30.0 or higher falls within the obese range.</li>   
+                        </ul> 
+                    <button class="btn btn-primary" onclick="myClick('whoisbmi')">Calculate BMI</button>
+                </div>
+
+                <div class="col-lg-4">
+                    <h2 style="text-align: center;">BMR</h2>
+                    <p>Basal metabolic rate (BMR) is the total number of calories that your body needs to perform basic, life-sustaining functions. <a onclick="myClick('moreBMR')" style="cursor: pointer;">Read more...</a></p>
+                    <p id="moreBMR"  style="text-align: left; display: none;">
+                        Calculated using <strong>The Harris–Benedict Equation</strong><br>
+                        <strong>For Men:</strong><br>
+                        BMR = 66 + (6.2 × weight in lbs) + (12.7 × height in in) – (6.76 × age)<br>
+                        <strong>For Women:</strong><br>
+                        BMR = 655.1 + (4.35 × weight in lbs) + (4.7 × height in in) - (4.7 × age)
+                    </p>
+                    <button class="btn btn-primary" onclick="myClick('whoisbmr')">Calculate BMR</button>
+                </div>
+
+                <div class="col-lg-4">
+                    <h2 style="text-align: center;">EER</h2>
+                    <p>The estimated energy requirement (EER) is the normal dietary energy consumption that is calculated to maintain the energy balance in a fit, average-weight person of a specified gender, age, height, weight with consistent optimal health. <a onclick="myClick('moreEER')" style="cursor: pointer;">Read more...</a></p>
+                    
+                        <ul id="moreEER"  style="text-align: left; display: none;">
+                            <li>Sedentary: BMR x 1.0</li>
+                            <li>Low Active<ul>
+                                <li>Men: BMR x 1.11</li>
+                                <li>Women: BMR x 1.12</li></ul></li>
+                            <li>Active<ul>
+                                    <li>Men: BMR x 1.25</li>
+                                    <li>Women: BMR x 1.27</li></ul></li>
+                            <li>Very Active<ul>
+                                    <li>Men: BMR x 1.48</li>
+                                    <li>Women: BMR x 1.45</li></ul></li>
+                        </ul>
+                    
+                    <div onclick="myClick('eer')"><button id="me" class="btn btn-primary"  onclick="myClick('me')">Calculate EER</button></div>
+                    <div id="eer" style="display:none; text-align: left;">
+
+                            <form class="form-horizontal" action="/eer" method="POST">
+                                    <input type="radio" name="active" value="sedentary"><strong>Sedentary</strong><br>
+                                    <ul>
+                                        <li>No moderate or vigorious activities(Desk job)</li>
+                                        <li>Less than 30 minutes of intentional excercise</li>
+                                    </ul>   
+                                    <input type="radio" name="active" value="lowActive"><strong>Low Active</strong><br>
+                                    <ul>
+                                        <li>Spending much time on feet at work(salesperson, teacher)</li>
+                                        <li>Moderate excercise of 30 minutes, or vigorious for 15-20 minutes</li>
+                                    </ul>
+                                    <input type="radio" name="active" value="active"><strong>Active</strong><br>
+                                    <ul>
+                                        <li>Spending much time doing physical activity(waitress, mailman)</li>
+                                        <li>Moderate excercise of 1 hour 30 minutes, or vigotious for 50 minutes</li>
+                                    </ul>
+                                    <input type="radio" name="active" value="veryActive"><strong>Very Active</strong><br>
+                                    <ul>
+                                        <li>Spending much time doing heavy physical activity(biking, carpentry)</li>
+                                        <li>Moderate excercise of 4 hour, or vigotious for 2 hours</li>
+                                    </ul>
+                                    <button class="btn btn-lg btn-primary btn-block" type="submit">GO!</button>
+                            </form>                            
+                        
+                    </div>
+                </div>
+            </div>
+                
+                <div style="text-align: center">
+                    <form class="form-horizontal" action="/chart" method="POST">
+                    <h3>Chart Your Progress:</h3>
+                        <select name="time">
+                            <option value="1">1 month</option>
+                            <option value="3">3 months</option>
+                            <option value="6">6 months</option>
+                            <option value="12">1 year</option>
+                            <option value="13">All Time</option>
+                        </select>
+                        <button class="btn btn-primary" type="submit">GO!</button>
+                    </form>
+                </div>
+                
+                <script>
+                    function myClick(mydiv){
+                        var x = document.getElementById(mydiv);
+                        if (x.style.display === "none"){
+                            x.style.display = "block";
+                        } else {
+                            x.style.display = "none";
+                        }
+                    }
+                    </script>
+
+                        {% endblock content %}      
+                   
+                </div>                
+            </div>            
+        </div>              
+                
+        
+    
+   
+    <div class="row text-center navbar footer">
+        <div class="col-md-12">
+            <p>2018 Healthy</p>
+        </div>
+    </div>
+
+
+    {% endblock body %}
+    
+
+    

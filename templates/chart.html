@@ -1,0 +1,107 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+
+<!doctype html>
+<html>
+
+<head>
+	<title>Line Chart</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+	<script src="http://www.chartjs.org/dist/2.7.2/Chart.js"></script>
+	<script src="http://www.chartjs.org/samples/latest/utils.js"></script>
+	<style>
+		canvas {
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div style="width:80%;">
+        <h1>{{ day[0].strftime('%m/%d/%y') }} - {{ day[-1].strftime('%m/%d/%y') }} Weight Chart</h1>
+		<canvas id="canvas"></canvas>
+	</div>
+
+	<a href="/">return</a>
+	<script>		
+
+		var color = Chart.helpers.color;
+		var config = {
+			type: 'line',
+			data: {
+                
+				labels: [
+                {% for item in day %}
+                  "{{ item.strftime('%m/%d/%y') }}",
+                {% endfor %}],
+				datasets: [{
+                    label: "Weight in Lbs",
+					backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+					borderColor: window.chartColors.red,
+					fill: false,
+					data: [
+                    {% for item in weighs %}
+                      {{ item }},
+                    {% endfor %}
+					],
+				}]
+			},
+			options: {
+                legend: {
+                    display: false
+                },
+				title: {
+					text: 'Weight Chart'
+				},
+				scales: {
+					xAxes: [{
+						type: 'time',
+                        time: {
+                            displayFormats: {
+                                'day': 'MMM D',
+                                'hour': 'MMM D'
+                            }  
+                        },
+                        stepSize: 1,
+                        tooltipFormat: 'll',
+						scaleLabel: {
+							display: true,
+							labelString: 'Date'
+						}
+					}],
+					yAxes: [{
+						scaleLabel: {
+							display: true,
+							labelString: 'Weight in Lbs'
+						},
+                        ticks: {
+                            suggestedMin: Math.ceil({{ max }} / 1.5),
+                            steps: 10,
+                            stepValue: 5,
+                            max: Math.ceil({{ max }} * 1.1)
+                            
+                        }
+					}]
+				},
+			}
+		};
+
+		window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myLine = new Chart(ctx, config);
+
+		};
+
+		var colorNames = Object.keys(window.chartColors);
+
+        
+
+	</script>
+</body>
+</html>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<div class="col-md-6 col-md-offset-3 col-sm-12 maincontent"> 
+<div style="text-align: center; padding-top: 50px;">
+<p><h3>Your Estimated Energy Requirement is <strong>{{ data }}</strong> Calories.</h3></p>
+<p><h4>This is the amount of calories you should consume on a daily basis to maintain weight.</h4></p>
+<p><h4>To lose weight, you should consume below your EER.<br>For example, you need to have a 500 calorie a day deficit to lose 1 lb a week.</h4></p>
+</div>
+
+{% endblock %}
