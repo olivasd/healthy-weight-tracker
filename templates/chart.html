@@ -1,32 +1,29 @@
 {% extends 'index.html' %}
 
+{% block styles %}
+	{{ super() }}
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+		<script src="http://www.chartjs.org/dist/2.7.2/Chart.js"></script>
+		<script src="http://www.chartjs.org/samples/latest/utils.js"></script>
+		<style>
+			canvas {
+				-moz-user-select: none;
+				-webkit-user-select: none;
+				-ms-user-select: none;
+			}
+		</style>
+	{% endblock styles %}
+
 {% block content %}
 
 
-<!doctype html>
-<html>
 
-<head>
-	<title>Line Chart</title>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
-	<script src="http://www.chartjs.org/dist/2.7.2/Chart.js"></script>
-	<script src="http://www.chartjs.org/samples/latest/utils.js"></script>
-	<style>
-		canvas {
-			-moz-user-select: none;
-			-webkit-user-select: none;
-			-ms-user-select: none;
-		}
-	</style>
-</head>
-
-<body>
-	<div style="width:80%;">
-        <h1>{{ day[0].strftime('%m/%d/%y') }} - {{ day[-1].strftime('%m/%d/%y') }} Weight Chart</h1>
+	<div class="col-md-8 col-md-offset-2 col-sm-12 maincontent" style="background:ghostwhite;">
+        <h1>Weight Chart for {{ day[0].strftime('%m/%d/%y') }} - {{ day[-1].strftime('%m/%d/%y') }}</h1>
 		<canvas id="canvas"></canvas>
+	<a class="btn btn-primary" href="/">return</a>
 	</div>
 
-	<a href="/">return</a>
 	<script>		
 
 		var color = Chart.helpers.color;
@@ -98,10 +95,7 @@
 
 		var colorNames = Object.keys(window.chartColors);
 
-        
 
 	</script>
-</body>
-</html>
 
-{% endblock %}
+{% endblock content %}

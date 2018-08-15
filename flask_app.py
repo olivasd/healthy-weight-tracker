@@ -245,7 +245,7 @@ def send_email(user):
 def compare_weight(cur_weight):
     first_weight = float(UserWeights.query.filter(UserWeights.user_id == current_user.id).order_by(UserWeights.date.asc()).first().weight)
     if cur_weight < first_weight:
-        flash("You have lost" + str(int(first_weight - cur_weight))  + " lbs so far!")
+        flash("You have lost " + str(int(first_weight - cur_weight))  + " lbs so far!")
     elif cur_weight > first_weight:
         flash("You have gained " + str(int(cur_weight - first_weight)) + " lbs so far!")
     else:
@@ -253,4 +253,4 @@ def compare_weight(cur_weight):
       
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
