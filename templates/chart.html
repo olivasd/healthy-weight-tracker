@@ -2,100 +2,49 @@
 
 {% block styles %}
 	{{ super() }}
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
-		<script src="http://www.chartjs.org/dist/2.7.2/Chart.js"></script>
-		<script src="http://www.chartjs.org/samples/latest/utils.js"></script>
-		<style>
-			canvas {
-				-moz-user-select: none;
-				-webkit-user-select: none;
-				-ms-user-select: none;
-			}
-		</style>
+  <link rel="stylesheet" type="text/css" href="/static/css/c3.css">
+  <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+  <script src="/static/js/c3.js"></script>
+
 	{% endblock styles %}
 
 {% block content %}
 
+	<div class="col-md-10 col-md-offset-1 col-sm-12 maincontent" style="background:ghostwhite;"> 
+      <h1>Weight Chart for {{ day[0].strftime('%m/%d/%y') }} - {{ day[-1].strftime('%m/%d/%y') }}</h1>
+    	<div id="chart"></div>
+	</div>    
 
-
-	<div class="col-md-8 col-md-offset-2 col-sm-12 maincontent" style="background:ghostwhite;">
-        <h1>Weight Chart for {{ day[0].strftime('%m/%d/%y') }} - {{ day[-1].strftime('%m/%d/%y') }}</h1>
-		<canvas id="canvas"></canvas>
-	<a class="btn btn-primary" href="/">return</a>
-	</div>
-
-	<script>		
-
-		var color = Chart.helpers.color;
-		var config = {
-			type: 'line',
-			data: {
-                
-				labels: [
-                {% for item in day %}
-                  "{{ item.strftime('%m/%d/%y') }}",
-                {% endfor %}],
-				datasets: [{
-                    label: "Weight in Lbs",
-					backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
-					borderColor: window.chartColors.red,
-					fill: false,
-					data: [
-                    {% for item in weighs %}
-                      {{ item }},
-                    {% endfor %}
-					],
-				}]
-			},
-			options: {
-                legend: {
-                    display: false
-                },
-				title: {
-					text: 'Weight Chart'
-				},
-				scales: {
-					xAxes: [{
-						type: 'time',
-                        time: {
-                            displayFormats: {
-                                'day': 'MMM D',
-                                'hour': 'MMM D'
-                            }  
-                        },
-                        stepSize: 1,
-                        tooltipFormat: 'll',
-						scaleLabel: {
-							display: true,
-							labelString: 'Date'
-						}
-					}],
-					yAxes: [{
-						scaleLabel: {
-							display: true,
-							labelString: 'Weight in Lbs'
-						},
-                        ticks: {
-                            suggestedMin: Math.ceil({{ max }} / 1.5),
-                            steps: 10,
-                            stepValue: 5,
-                            max: Math.ceil({{ max }} * 1.1)
-                            
-                        }
-					}]
-				},
-			}
-		};
-
-		window.onload = function() {
-			var ctx = document.getElementById('canvas').getContext('2d');
-			window.myLine = new Chart(ctx, config);
-
-		};
-
-		var colorNames = Object.keys(window.chartColors);
-
+    <script>
+      var chart = c3.generate({
+        bindto: '#chart',
+        data: {
+          x : 'x',
+          xFormat : '%m-%d-%y',
+          columns: [
+           ['x', 
+		   {% for item in day %}
+            	"{{ item.strftime('%m-%d-%y') }}",
+            	{% endfor %}
+				],
+            ['weight', 
+            {% for item in weighs %}
+                {{ item }},
+            {% endfor %}
+            ]
+          ]
+        },
+        axis : {
+          x : {
+            type : 'timeseries',
+          },
+          y : {
+            min: {{ min }} - 20,
+            max: {{ max }} + 20,
+          }
+        },        
+      });
 
 	</script>
-
+	
 {% endblock content %}
